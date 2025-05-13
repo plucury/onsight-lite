@@ -54,8 +54,8 @@ if uploaded_file:
                 # Convert the OpenCV image to RGB format for Streamlit
                 result_rgb = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
                 # Use PIL to create an Image object that Streamlit can display
-                result_pil = Image.fromarray(result_rgb)
-                st.image(result_pil, caption="Hold region detected based on color")
+                # result_pil = Image.fromarray(result_rgb)
+                st.image(Image.fromarray(result_rgb), caption="Hold region detected based on color")
             else:
                 st.info("Click on a point in the image above to detect the hold.")
     except UnidentifiedImageError:
