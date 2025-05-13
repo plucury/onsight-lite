@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image, ImageDraw, UnidentifiedImageError
 import io
 import colorsys
+from streamlit_drawable_canvas import st_canvas
 
 # Configure the page
 st.set_page_config(page_title="Onsight Lite", layout="centered")
@@ -56,12 +57,25 @@ if uploaded_file:
             # Display the image
             st.image(image, caption="Uploaded Image", use_column_width=True)
             
-            # Create columns for coordinates input
-            col1, col2 = st.columns(2)
-            with col1:
-                x = st.number_input("X coordinate", min_value=0, max_value=image.width-1, value=image.width//2)
-            with col2:
-                y = st.number_input("Y coordinate", min_value=0, max_value=image.height-1, value=image.height//2)
+            st.markdown("Click on the image to choose a hold point:")
+            canvas_result = st_canvas(
+                fill_color="rgba(255, 0, 0, 0.3)",
+                stroke_width=10,
+                background_image=image,
+                update_streamlit=True,
+                height=image.height,
+                width=image.width,
+                drawing_mode="point",
+                key="canvas"
+            )
+
+            if canvas_result.json_data and canvas_result.json_data["objects"]:
+                last_obj = canvas_result.json_data["objects"][-1]
+                x = int(last_obj["left"])
+                y = int(last_obj["top"])
+            else:
+                x = image.width // 2
+                y = image.height // 2
             
             # Button to detect the hold
             if st.button("Detect Hold"):
