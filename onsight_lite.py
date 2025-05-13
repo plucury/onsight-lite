@@ -55,7 +55,7 @@ if uploaded_file:
             img_array = np.array(image.convert("RGB"))
             
             # Display the image
-            st.image(image, caption="Uploaded Image", use_column_width=True)
+            st.image(image, caption="Uploaded Image", use_container_width=True)
             
             st.markdown("Click on the image to choose a hold point:")
             canvas_result = st_canvas(
@@ -87,7 +87,7 @@ if uploaded_file:
                 point_img = image.copy()
                 draw = ImageDraw.Draw(point_img)
                 draw.ellipse((x-5, y-5, x+5, y+5), fill="red")
-                st.image(point_img, caption="Selected Point", use_column_width=True)
+                st.image(point_img, caption="Selected Point", use_container_width=True)
                 
                 # Detect similar colors
                 mask = detect_similar_colors(img_array, target_color)
@@ -97,12 +97,9 @@ if uploaded_file:
                 for i in range(3):  # Apply to each RGB channel
                     result_array[:,:,i] = np.where(mask == 255, img_array[:,:,i], 0)
                 
-                # Convert result back to PIL Image
-                result_img = Image.fromarray(result_array.astype('uint8'))
-                
                 # Display the result
                 st.subheader("Detected Region")
-                st.image(result_img, caption="Hold region detected based on color")
+                st.image(np.clip(result_array, 0, 255).astype("uint8"), channels="RGB", caption="Hold region detected based on color")
     
     except UnidentifiedImageError:
         st.error("Could not identify the image format. Please ensure you're uploading a valid JPG, JPEG, or PNG file.")
